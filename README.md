@@ -45,7 +45,7 @@ Below are the configuration settings that are stored in the pickle file and thei
       'Filename_StartDateFormat':       A format string that helps identify the date and start timestamp portion within the IMERG filenames.  i.e. '%Y%m%d-S%H%M%S'
       'ftp_host':                       The name of the ftp site for downloading IMERG data.  i.e. 'jsimpson.pps.eosdis.nasa.gov'
       'ftp_user':                       ftp site USERNAME
-      'ftp_pswrd':                      ftp site PASSWORD'lance.gilliland@nasa.gov',
+      'ftp_pswrd':                      ftp site PASSWORD
       'ftp_baseLateFolder':             ftp site base folder for where we will retrieve the 1, 3, and 7 day files.  i.e. '/data/imerg/gis'
       'svc_adminURL':                   Base ArcGIS Admin URL for your Image Services. i.e. 'https://gis1.servirglobal.net/arcgis/admin'
       'svc_username':                   ArcGIS Admin USERNAME
