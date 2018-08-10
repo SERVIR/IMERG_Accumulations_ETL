@@ -57,6 +57,12 @@ Below are the configuration settings that are stored in the pickle file and thei
       'svc_Type':                       Type of service.  i.e. 'ImageServer' or 'MapServer'
 ```
 
+## Prerequisites:
+ * The user running the script must be allowed folder and file write permissions on the local machine.
+ * The file geodatabase and the associated mosaic datasets must already exist.
+ * The GPM/PPS ftp account (username and password) must already be established.
+ * The associated ArcGIS image services must already exist with proper admin account credentials required for managing the services.
+
 ## Instructions to prep the script for running:
 1.	Go to IMERG_Accumulations_Pickle.py and CAREFULLY enter your specific paths and credentials.
 2.  Go to IMERG_Accumulations_Pickle.bat and a.) check the path to your version of python.exe, and b.) update the path to your copy of IMERG_Accumulations_Pickle.py.
