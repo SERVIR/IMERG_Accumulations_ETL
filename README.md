@@ -13,13 +13,13 @@ This IMERG Accumulations ETL (Extract, Transform, and Load) retrieves the latest
 
 ## Details: 
 The high-level processing details are:
-    1.) Connect to the source ftp site and change to the proper folder that contains the files that we want.
-    2.) Get the list of filenames from the ftp folder. Process through the list and identify which specific files (1 Day, 3 Day, and 7 Day) we are interested in downloading.
-    3.) Download only the files that we need into a temporary extract folder.
-    4.) Process through the files in the temp extract folder and a.) rewrite/save the each file to it's proper final folder location as the desired filename, and b.) load each file to it's respective file geodatabase mosaic dataset.
-    5.) As each file is processed successfully, delete the temp extract copy of the file.
-    6.) Compact the file geodatabase.
-    7.) Refresh (Stop and Restart) each of the services. (1, 3, and 7 Day)
+1. Connect to the source ftp site and change to the proper folder that contains the files that we want.
+2. Get the list of filenames from the ftp folder. Process through the list and identify which specific files (1 Day, 3 Day, and 7 Day) we are interested in downloading.
+3. Download only the files that we need into a temporary extract folder.
+4. Process through the files in the temp extract folder and a.) rewrite/save the each file to it's proper final folder location as the desired filename, and b.) load each file to it's respective file geodatabase mosaic dataset.
+5. As each file is processed successfully, delete the temp extract copy of the file.
+6. Compact the file geodatabase.
+7. Refresh (Stop and Restart) each of the services. (1, 3, and 7 Day)
 
 As the source ftp files are generated in a folder hierarchy broken down by ../(basefolder)/(year)/(month), this script uses the current date to determine the source ftp folder location and then downloads the latest 1, 3, and 7 day files based on the date/time stamp in the file names.  (The files are named similar to '3B-HHR-L.MS.MRG.3IMERG.20180809-S233000-E235959.1410.V05B.1day.tif' and the code logic parses out the date/start time from the filename string to determine the latest files.)  Once the most recent files are downloaded to a temp extract folder, the script then processes each file in that folder and extracts only pixel values > 0 and < 29990 and saves the resulting files into the source folder supporting the mosaic datasets. As the files are extracted, they are renamed to IMERG1Day.tif, IMERG3Day.tif, and IMERG7Day.tif before being loaded into their respective mosaic dataset.  (Each mosaic dataset will only ever contain 1 raster entry - which is overwritten each time a new file is loaded.)  As each downloaded file is loaded into it's mosaic dataset and copied into the folder supporting the mosaic dataset, the downloaded file is deleted from the temp extract folder.  Finally, the corresponding ArcGIS Image service is stopped and restarted to reflect the added data.
 
