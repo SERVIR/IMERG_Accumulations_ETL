@@ -26,11 +26,11 @@ import sys  # required for capture_exception()
 
 import re  # required for Regular Expressions
 
-import json  # required for RefreshService() (stopping and starting services)
 import urllib  # required for RefreshService() (stopping and starting services) and retrieving remote files.
 import urllib2  # required for retrieving remote files.
 
 import ftplib  # require for ftp downloads
+import json  # required for UpdateServicesJsonFile() (updating services JSON file)
 
 
 # ------------------------------------------------------------
@@ -223,6 +223,55 @@ def ValidAccumulationRaster(fileName):
         return bRetVal
     except:
         return False
+
+
+def UpdateServicesJsonFile(jFile, serviceName, odateUpdated):
+    """
+    Read the json file and update the lastUpdated for the specified svcName.
+    jFile should be the full path and filename for the json file.
+    """
+    try:
+
+        # Convert the date object passed in to a formatted string
+        sdateUpdated = odateUpdated.strftime('%Y-%m-%d %H:%M:%S')
+
+        if os.path.isfile(jFile):
+
+            # Open and read the file
+            with open(jFile, "r") as jf:
+                data = json.load(jf)
+            jf.close()
+
+            # Update the desired service info
+            bUpdated = False
+            for svc in data["Services"]:
+                if svc["svcName"] == serviceName:
+                    svc["lastUpdated"] = sdateUpdated
+                    bUpdated = True
+                    break
+
+            # Check to see if anything was updated...
+            if not bUpdated:
+                # The service name didn't exist, so lets add it.
+                data["Services"].append(
+                    {
+                        "svcName": serviceName,
+                        "lastUpdated": sdateUpdated
+                    }
+                )
+
+            # Open and write the file
+            with open(jFile, "w") as f:
+                json.dump(data, f)
+            f.close()
+
+        else:
+            logging.info("JSON file for tracking services updates not found: {0}".format(jFile))
+
+    except:
+        logging.warning("Error updating Services JSON file with last updated date...")
+        err = capture_exception()
+        logging.error(err)
 
 
 def Get_StartDateTime_FromString(theString, regExp_Pattern, source_dateFormat):
@@ -861,7 +910,7 @@ def main():
         svc1Day.username = GetConfigString('svc_username')
         svc1Day.password = GetConfigString('svc_password')
         svc1Day.folder = GetConfigString('svc_folder')
-        svc1Day.svcType = GetConfigString('svc_Type')
+        svc1Day.svcType = 'ImageServer'
         svc1Day.svcName = GetConfigString('svc_Name_1Day')
 
         svc3Day = MapService()
@@ -869,7 +918,7 @@ def main():
         svc3Day.username = GetConfigString('svc_username')
         svc3Day.password = GetConfigString('svc_password')
         svc3Day.folder = GetConfigString('svc_folder')
-        svc3Day.svcType = GetConfigString('svc_Type')
+        svc3Day.svcType = 'ImageServer'
         svc3Day.svcName = GetConfigString('svc_Name_3Day')
 
         svc7Day = MapService()
@@ -877,8 +926,16 @@ def main():
         svc7Day.username = GetConfigString('svc_username')
         svc7Day.password = GetConfigString('svc_password')
         svc7Day.folder = GetConfigString('svc_folder')
-        svc7Day.svcType = GetConfigString('svc_Type')
+        svc7Day.svcType = 'ImageServer'
         svc7Day.svcName = GetConfigString('svc_Name_7Day')
+
+        svcAll = MapService()
+        svcAll.adminURL = GetConfigString('svc_adminURL')
+        svcAll.username = GetConfigString('svc_username')
+        svcAll.password = GetConfigString('svc_password')
+        svcAll.folder = GetConfigString('svc_folder')
+        svcAll.svcType = 'MapServer'
+        svcAll.svcName = GetConfigString('svc_Name_All')
 
         # Note the arcpy.PublishingTools.RefreshService() call must only be available at ArcGIS 10.6 and later
         # as it doesn't seem to work at 10.4
@@ -886,10 +943,19 @@ def main():
         ### arcpy.PublishingTools.RefreshService(svc1Day.svcName, svc1Day.svcType, svc1Day.folder, "#")
         ### arcpy.PublishingTools.RefreshService(svc3Day.svcName, svc3Day.svcType, svc3Day.folder, "#")
         ### arcpy.PublishingTools.RefreshService(svc7Day.svcName, svc7Day.svcType, svc7Day.folder, "#")
+        ### arcpy.PublishingTools.RefreshService(svcAll.svcName, svcAll.svcType, svcAll.folder, "#")
         # ToDo... Enable these calls on the server...
         # refreshService(svc1Day)
         # refreshService(svc3Day)
         # refreshService(svc7Day)
+        # refreshService(svcAll)
+        # Update the JSON file used to verify service updates...
+        jsonFile = GetConfigString('JSONFile_ServiceUpdates')
+        UpdateServicesJsonFile(jsonFile,  svc1Day.svcName, o_today_DateTime)
+        UpdateServicesJsonFile(jsonFile,  svc3Day.svcName, o_today_DateTime)
+        UpdateServicesJsonFile(jsonFile,  svc7Day.svcName, o_today_DateTime)
+        UpdateServicesJsonFile(jsonFile,  svcAll.svcName, o_today_DateTime)
+
         logging.info("\t=== PERFORMANCE ===>: RefreshServiceProcess took: " +
                      get_Elapsed_Time_As_String(time_RefreshServiceProcess))
 

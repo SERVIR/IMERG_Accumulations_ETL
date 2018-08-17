@@ -20,11 +20,12 @@ mydict = {'extract_AccumulationsFolder': 'E:\ETLScratch\IMERG_Extract\Accumulati
           'svc_adminURL': 'https://gis1.servirglobal.net/arcgis/admin',
           'svc_username': 'SOMEVALUE',
           'svc_password': 'SOMEVALUE',
-          'svc_folder': 'Test',
-          'svc_Name_1Day': 'IMERG1Day_ImgSvc',
-          'svc_Name_3Day': 'IMERG3Day_ImgSvc',
-          'svc_Name_7Day': 'IMERG7Day_ImgSvc',
-          'svc_Type': 'ImageServer'}
+          'svc_folder': 'Global',
+          'svc_Name_1Day': 'IMERG_Acc_1Day_ImgSvc',
+          'svc_Name_3Day': 'IMERG_Acc_3Day_ImgSvc',
+          'svc_Name_7Day': 'IMERG_Acc_7Day_ImgSvc',
+          'svc_Name_All': 'IMERG_Accumulations',
+          'JSONFile_ServiceUpdates': 'E:\SERVIR\Data\Global\SERVIRservices.json'}
 
 output = open('config.pkl', 'wb')
 pickle.dump(mydict, output)
