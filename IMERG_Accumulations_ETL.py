@@ -596,10 +596,9 @@ def LoadAccumulationRasters(temp_workspace):
     """
     try:
         arcpy.CheckOutExtension("Spatial")
-        # inSQLClause = "VALUE >= 0"
         # We do not want the zero values and we also do not want the "NoData" value of 29999.
-        # So let's extract only the values above 0 and less than 29900.
-        inSQLClause = "VALUE > 0 AND VALUE < 29900"
+        # So let's extract only the values above 0 and less than 29999.
+        inSQLClause = "VALUE > 0 AND VALUE < 29999"
         arcpy.env.workspace = temp_workspace
         arcpy.env.overwriteOutput = True
 
