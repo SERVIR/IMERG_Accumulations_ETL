@@ -54,7 +54,8 @@ Below are the configuration settings that are stored in the pickle file and thei
       'svc_Name_1Day':                  Name of the 1 Day Image Service
       'svc_Name_3Day':                  Name of the 3 Day Image Service
       'svc_Name_7Day':                  Name of the 7 Day Image Service
-      'svc_Type':                       Type of service.  i.e. 'ImageServer' or 'MapServer'
+      'svc_Name_All':                   Name of the Map Service containing all 3 of the Accumulation layers
+      'JSONFile_ServiceUpdates':        Path and filename of a SERIVR-specific JSON file that tracks the datetime stamp and service name that is updated.  i.e. 'C:\inetpub\wwwroot\SERVIRservices.json'
 ```
 
 ## Prerequisites:
