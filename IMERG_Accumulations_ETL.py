@@ -684,32 +684,39 @@ def LoadAccumulationRasters(temp_workspace):
                 extract = arcpy.sa.ExtractByAttributes(rasterToLoad.origFile, inSQLClause)
                 loadRaster = os.path.join(final_RasterSourceFolder, rasterToLoad.loadFile)
                 extract.save(loadRaster)
-                # arcpy.AddRastersToMosaicDataset_management(rasterToLoad.targetDataset, "Raster Dataset", loadRaster,
-                #                                            "NO_CELL_SIZES", "NO_BOUNDARY", "NO_OVERVIEWS",
-                #                                            "2", "#", "#", "#", "#", "NO_SUBFOLDERS",
-                #                                            "OVERWRITE_DUPLICATES", "NO_PYRAMIDS",
-                #                                            "NO_STATISTICS", "NO_THUMBNAILS",
-                #                                            "Add Raster Datasets", "#")
-                arcpy.AddRastersToMosaicDataset_management(in_mosaic_dataset=rasterToLoad.targetDataset,
-                                                           raster_type="Raster Dataset",
-                                                           input_path=loadRaster,
-                                                           update_cellsize_ranges="UPDATE_CELL_SIZES",
-                                                           update_boundary="UPDATE_BOUNDARY",
-                                                           update_overviews="NO_OVERVIEWS",
-                                                           maximum_pyramid_levels="",
-                                                           maximum_cell_size="0",
-                                                           minimum_dimension="1500",
-                                                           spatial_reference="",
-                                                           filter="#",
-                                                           sub_folder="SUBFOLDERS",
-                                                           duplicate_items_action="ALLOW_DUPLICATES",
-                                                           build_pyramids="NO_PYRAMIDS",
-                                                           calculate_statistics="NO_STATISTICS",
-                                                           build_thumbnails="NO_THUMBNAILS",
-                                                           operation_description="#",
-                                                           force_spatial_reference="NO_FORCE_SPATIAL_REFERENCE",
-                                                           estimate_statistics="NO_STATISTICS",
-                                                           aux_inputs="")
+                # ----------
+                #  For some reason, the extract is causing the raster attribute table (.tif.vat.dbf file) to be created
+                # which is being locked (with a ...tif.vat.dbf.lock file) as users access the WMS service. The problem
+                # is that the lock file is never released and future updates to the raster are failing. Therefore, here
+                # we will just try to delete the raster attribute table right after it is created.
+                arcpy.DeleteRasterAttributeTable_management(loadRaster)
+                # ----------
+                arcpy.AddRastersToMosaicDataset_management(rasterToLoad.targetDataset, "Raster Dataset", loadRaster,
+                                                           "UPDATE_CELL_SIZES", "NO_BOUNDARY", "NO_OVERVIEWS",
+                                                           "2", "#", "#", "#", "#", "NO_SUBFOLDERS",
+                                                           "OVERWRITE_DUPLICATES", "BUILD_PYRAMIDS",
+                                                           "CALCULATE_STATISTICS", "NO_THUMBNAILS",
+                                                           "Add Raster Datasets", "#")
+                # arcpy.AddRastersToMosaicDataset_management(in_mosaic_dataset=rasterToLoad.targetDataset,
+                #                                            raster_type="Raster Dataset",
+                #                                            input_path=loadRaster,
+                #                                            update_cellsize_ranges="UPDATE_CELL_SIZES",
+                #                                            update_boundary="UPDATE_BOUNDARY",
+                #                                            update_overviews="NO_OVERVIEWS",
+                #                                            maximum_pyramid_levels="",
+                #                                            maximum_cell_size="0",
+                #                                            minimum_dimension="1500",
+                #                                            spatial_reference="",
+                #                                            filter="#",
+                #                                            sub_folder="SUBFOLDERS",
+                #                                            duplicate_items_action="ALLOW_DUPLICATES",
+                #                                            build_pyramids="NO_PYRAMIDS",
+                #                                            calculate_statistics="NO_STATISTICS",
+                #                                            build_thumbnails="NO_THUMBNAILS",
+                #                                            operation_description="#",
+                #                                            force_spatial_reference="NO_FORCE_SPATIAL_REFERENCE",
+                #                                            estimate_statistics="NO_STATISTICS",
+                #                                            aux_inputs="")
 
                 # If we get here, we have successfully added the raster to the mosaic and saved it to its final
                 # source location, so lets go ahead and remove it from the temp extract folder now...
